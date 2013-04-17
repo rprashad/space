@@ -17,7 +17,7 @@
 package Container::INI;
 use strict;
 
-sub new() {
+sub new {
 	my $class = $_[0];
 	my $self = { 'file' => $_[1] };
 	bless($self,$class);
@@ -74,7 +74,7 @@ sub source_config {
 
 				# single line entity - build/merge
 				if (!$continue and !$quoted) {
-					my $conf = $self->build_conf($key, $value);
+					my $conf = $self->build_conf([ split /\./, $key ], $value);
 					$$hpoint = $self->merge_conf($$hpoint, $conf);
 				}
 			
@@ -90,7 +90,7 @@ sub source_config {
 				# we've reached the end of our multi-line value
 				else {
 						$evalue .= $value;
-						my $conf = $self->build_conf($key, $evalue);
+						my $conf = $self->build_conf([ split /\./, $key ], $evalue);
 						$$hpoint = $self->merge_conf($$hpoint, $conf);
 						$continue = $evalue = $quoted = undef;
 				}
@@ -107,7 +107,7 @@ sub get_config() {
 	return $_[0]->{conf};
 }
 
-sub merge_conf() {
+sub merge_conf {
 
 my ($self, $dst, $src) = @_,3;
 my $return =  { %{ $dst || {} } }; # shallow copy (if undef will give an new empty hash
@@ -135,18 +135,12 @@ return $return;
 
 } 
 
-
-sub build_conf() {
-	my ($self, $key, $value) = @_,3;
-	return $self->recursive_hash([ split /\./, $key ], $value);
-}
-
-sub recursive_hash() {
+sub build_conf {
 	my ($self, $aref, $val)  = @_,3;
 	my $element = shift(@{$aref});
 	my $hash = {};
 	if ($element) {
-		$hash->{$element} = $self->recursive_hash($aref, $val);
+		$hash->{$element} = $self->build_conf($aref, $val);
 		return $hash;
 	}
 
