@@ -26,7 +26,7 @@ sub new {
 sub source_config {
   my $self = $_[0];
 
-  open(CFG, < $self->{file} ) or die __PACKAGE__ . "Error reading ini: $self->{file}\n";
+  open(CFG, "< $self->{file}" ) or die __PACKAGE__ . "Error reading ini: $self->{file}\n";
   my ($module, $hpoint, $key, $value, $evalue, $continue, $quoted);
 
   while(<CFG>) {
