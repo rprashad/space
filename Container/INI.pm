@@ -1,4 +1,4 @@
-#    copyright 2013 - Rajendra Prashad nprashad@gmail.com
+#    copyright 2013 - Rajendra Prashad (nprashad@gmail.com)
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -15,79 +15,43 @@ use strict;
 package Container::INI;
 
 sub new {
-  my $class = $_[0];
   my $self = { 'file' => $_[1] };
-  bless($self,$class);
+  bless($self, $_[0]);
   $self->source_config;
   return $self;
 }
  
 sub source_config {
   my $self = $_[0];
-
-  open(CFG, "< $self->{file}" ) or die __PACKAGE__ . " Error reading ini: $self->{file}\n";
-  my ($module, $hpoint, $key, $value, $evalue, $continue, $quoted);
-  $module = {};
-  while(<CFG>) {
-   chomp($_);
+  open(CFG, "< $self->{file}" ) or die __PACKAGE__ , " Error reading ini: $self->{file}\n";
+  my ($module, $hpoint, $pkey, $key, $pvalue, $value);
+  while(my $line = <CFG>) {
+    chomp($line);
    # ignore lines that begin with '#' or ';' or whitespace
-   if ($_ !~ /^\s*?(?:#|;)/) {
-     # Find context/header
-     	if ($_ =~ /\[\s*(.*)\s*\]/g) {
-		# this allows for unlimited context separators '::' to be present in the header
-		# [this::is::valid] = $this->{is}->{valid}
+   if ($line !~ /^\s*(?:(#|;))/ && $line ne '') {
+     # Find header and context [ header::context]
+     	if ($line =~ /\[\s*(.*)\s*\]/g) {
+		# process context separators '::' in header - nice to have
 		my $conf = $self->build_conf([ split /[:]{2}/, $1 || ( $1 ) ], undef);
 		$module = $self->merge_conf($module, $conf);
-		$hpoint = $self->build_ref_point($module, $conf);
+		$hpoint = $self->return_ref_point($module, $conf);
        } # end context/header
-		
-	# process key/value pairs
-        else {
-          # line continuation code
-          if (!$continue and !$quoted) {
-            ($key, $value) = split("=",$_,2);
-            $key =~ s/\s+//g;
+       # process key/value pairs
+       else {
+	 ($key, $value) = split(/(?<!\\)\s*[=]/,$line);
+	  chomp($key); chomp($value);
+          if ($value && $key) {
+	    if ($pvalue) { $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); }
+	    $pkey = $key;  $pvalue = $value;
           }
           else {
-           $value = $_;
-          }
-
-          # found line continuation char \
-          if ($value =~ /(.*)\s*?\\\s*?$/) {
-            $continue += 1;
-          }
-
-          # found quoted text
-          elsif ($value =~ /"/ && $value !~ /"[^"]+"/) {
-            $quoted++;
-          }
-
-          # single line entity - build/merge
-          if (!$continue and !$quoted) {
-            my $conf = $self->build_conf([ split /\./, $key ], $value);
-            $$hpoint = $self->merge_conf($$hpoint, $conf);
-          }
-
-          # found line continuation char \      
-          elsif ($value =~ /(.*)?\s*?\\\s*?$/) {
-            $value = $1 . "\n";
-            $evalue .= $value;
-          }
-          # found a quote
-          elsif ($quoted == 1) {
-            $evalue .= "$value\n";
-          }
-          # we've reached the end of our multi-line value
-          else {
-            $evalue .= $value;
-            my $conf = $self->build_conf([ split /\./, $key ], $evalue);
-            $$hpoint = $self->merge_conf($$hpoint, $conf);
-            $continue = $evalue = $quoted = undef;
+            $pvalue .= $line;
           }
        } # end key/val procesing
   } # end syntax check
  } # end while
-
+  
+  if ($pvalue) { $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); }
   close(CFG);
   $self->{conf} = $module;
   return $self->{conf};
@@ -101,7 +65,7 @@ sub get_config() {
 sub merge_conf {
   my ($self, $dst, $src) = @_,;
   my $return =  { %{ $dst || {} } };
-  
+ 
   foreach my $key (keys %{$src}) {
     my $ref = ref($src->{$key});
     if ($ref eq 'HASH') {
@@ -135,21 +99,22 @@ sub build_conf {
     return $hash;
   }
 
-    my (@a) = map { s/\\,/,/g; s/(?<!\\)"//g; $_ } split(/\s*(?<!\\),\s*/,$val);
-    (scalar(@a) > 1) ? return \@a : return $a[0];
+    my (@a) = map { s/\\,/,/g; s/\\\s*$/\n/g; $_ } split(/\s*(?<!\\),\s*/,$val);
+      (scalar(@a) > 1) ? return \@a : return $a[0];
 }
 
 # return a ref to what would be or is the value
-sub build_ref_point {
+sub return_ref_point {
   my ($self, $module, $conf)  = @_;
   foreach my $key (keys %{$conf}) {	
     if (ref($module->{$key})) {
-      return $self->build_ref_point($module->{$key}, $conf->{$key});
+      return $self->return_ref_point($module->{$key}, $conf->{$key});
     }
     else {
 	if (!defined($module->{$key})) {
 		$module->{$key} = undef;
 	}
+	# we need to return a reference 
 	return \$module->{$key};
 	}
   }
