@@ -31,6 +31,10 @@ sub source_config {
    if ($line !~ /^\s*(?:(#|;))/ && $line ne '') {
      # Find header and context [ header::context]
      	if ($line =~ /\[\s*(.*)\s*\]/g) {
+		if ($pvalue) { 
+		  $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); 
+		  $pvalue = $pkey = undef;
+		}
 		# process context separators '::' in header - nice to have
 		my $conf = $self->build_conf([ split /[:]{2}/, $1 || ( $1 ) ], undef);
 		$module = $self->merge_conf($module, $conf);
@@ -39,7 +43,6 @@ sub source_config {
        # process key/value pairs
        else {
 	 ($key, $value) = split(/(?<!\\)\s*[=]/,$line);
-	  chomp($key); chomp($value);
           if ($value && $key) {
 	    if ($pvalue) { $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); }
 	    $pkey = $key;  $pvalue = $value;
