@@ -28,9 +28,9 @@ sub source_config {
   while(my $line = <CFG>) {
     chomp($line);
    # ignore lines that begin with '#' or ';' or whitespace
-   if ($line !~ /^\s*(?:(#|;))/ && $line ne '') {
+   if ($line !~ /^\s*[#; ]/) {
      # Find header and context [ header::context]
-     	if ($line =~ /\[\s*(.*)\s*\]/g) {
+     	if ($line =~ /\[\s*(.+)\s*\]/g) {
 		if ($pvalue) { 
 		  $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); 
 		  $pvalue = $pkey = undef;
@@ -42,7 +42,7 @@ sub source_config {
        } # end context/header
        # process key/value pairs
        else {
-	 ($key, $value) = split(/(?<!\\)\s*[=]/,$line);
+	 ($key, $value) = split(/(?<!\\)\s*[=]/,$line,2);
           if ($value && $key) {
 	    if ($pvalue) { $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); }
 	    $pkey = $key;  $pvalue = $value;
@@ -102,7 +102,7 @@ sub build_conf {
     return $hash;
   }
 
-    my (@a) = map { s/\\,/,/g; s/\\\s*$/\n/g; $_ } split(/\s*(?<!\\),\s*/,$val);
+    my (@a) = map { s/\\([,])/$1/g; $_ } split(/\s*(?<!\\),\s*/,$val);
       (scalar(@a) > 1) ? return \@a : return $a[0];
 }
 
