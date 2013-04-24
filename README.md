@@ -6,25 +6,25 @@ Container::INI - a small pure perl lib with zero deps that takes an INI file nam
 		 quite nicely.  Values are type checked for comma separated values to determine if value is a LIST context or SCALAR.
 
 # config
-[header::example::1]
-address.street=1 Individual Way
-address.city=Your Town
-address.state=Your State
-address.zip=Your Zip
-name.first=Rajendra
-name.last=Prashad
-os.unix.linux=Debian, Centos, Gentoo, Mint
-os.unix.bsd=FreeBSD, NetBSD, OpenBSD
+ [header::example::1]
+ address.street=1 Individual Way
+ address.city=Your Town
+ address.state=Your State
+ address.zip=Your Zip
+ name.first=Rajendra
+ name.last=Prashad
+ os.unix.linux=Debian, Centos, Gentoo, Mint
+ os.unix.bsd=FreeBSD, NetBSD, OpenBSD
 
 # code
-use Container::INI;
-use Data::Dumper;
+ use Container::INI;
+ use Data::Dumper;
 
-my $ini = new Container::INI("example1.ini");
-print Dumper $ini->get_config;
+ my $ini = new Container::INI("example1.ini");
+ print Dumper $ini->get_config;
 
 # output
-$VAR1 = {
+ $VAR1 = {
           'header' => {
                         'example' => {
                                        '1' => {
