@@ -11,8 +11,50 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+=head1 NAME
+ - Container::INI
+
+=over
+
+=item 
+Create beautifully complex (nested data structures) from an INI file.
+
+=item
+
+  Support for multi-line values
+  Dot notation on keys allow for nested hash references
+  Array detection on values when separated with a ','
+  Many uses (perl dependency injection, config management, prototyping classes/objects)
+
+=back
+
+=head1 SYNOPSIS
+
+  use Container::INI;
+
+  my $ds = Container::INI->new('example1.ini')->get_config();
+
+=head1 DESCRIPTION
+
+Read static key=value pairs from a recognizable file format to a single (complex) data structure without sacrificing speed or readability.
+
+=cut
 use strict;
 package Container::INI;
+
+=over 4
+
+=item B<new()>
+
+public Constructor method
+
+I<Arguments>: string to absolute path of configuration file.
+
+I<Returns>: Container::INI object
+
+=back
+
+=cut
 
 sub new {
   my $self = { 'file' => $_[1] };
@@ -20,7 +62,24 @@ sub new {
   $self->source_config;
   return $self;
 }
- 
+
+=over 4
+
+=item source_config
+
+generalized workhorse of Container::INI - responsible for opening, parsing, and constructing the final hash reference.
+
+private method
+
+I<Arguments>: string to absolute path of configuration file.
+
+I<Returns>: none
+
+=back
+
+=cut
+
+
 sub source_config {
   my $self = $_[0];
   open(CFG, "< $self->{file}" ) or die __PACKAGE__ , " Error reading ini: $self->{file}\n";
@@ -57,12 +116,41 @@ sub source_config {
   if ($pvalue) { $$hpoint = $self->merge_conf($$hpoint, $self->build_conf([ split /\./, $pkey ], $pvalue)); }
   close(CFG);
   $self->{conf} = $module;
-  return $self->{conf};
 }
+
+=over 4
+
+=item get_config
+
+public method
+
+I<Arguments>: none
+
+I<Returns>: hashref
+
+=back
+
+=cut
+
 
 sub get_config() {
   return $_[0]->{conf};
 }
+
+=over 4
+
+=item merge_conf 
+
+private method
+
+I<Arguments>: source hashref and dest hashref
+
+I<Returns>: merged hashref
+
+=back
+
+=cut
+
 
 # merges two hash references 
 sub merge_conf {
@@ -92,6 +180,21 @@ return $return;
 
 }
 
+=over 4
+
+=item build_conf
+
+private method
+
+I<Arguments>: key in the form of an arrayref and a value in the form a scalar
+
+I<Returns>: hashref
+
+=back
+
+=cut
+
+
 # converts an array in index order to a nested hash if applicable
 sub build_conf {
   my ($self, $aref, $val)  = @_;
@@ -105,6 +208,21 @@ sub build_conf {
     my (@a) = map { s/\\([,])/$1/g; $_ } split(/\s*(?<!\\),\s*/,$val);
       (scalar(@a) > 1) ? return \@a : return $a[0];
 }
+
+=over 4
+
+=item return_ref_point
+
+private method
+
+I<Arguments>: master hashref and skeleton hashref
+
+I<Returns>: a newly constructed reference to a value
+
+=back
+
+=cut
+
 
 # return a ref to what would be or is the value
 sub return_ref_point {
