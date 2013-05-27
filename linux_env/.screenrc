@@ -1,0 +1,2 @@
+# this has been sourced directly from: http://superuser.com/questions/181100/how-do-i-use-tabs-with-the-linux-screen-program
+caption always "%{= kw}%-w%{= BW}%n %t%{-}%+w %-= @%H - %LD %d %LM - %c"
