@@ -1,0 +1,22 @@
+# distro agnostic
+cobbler
+cobbler-web
+xinetd
+tftpd-hpa
+
+sed -i 's/authn_denyall/authn_configfile/g' /etc/cobbler/modules.conf
+htdigest /etc/cobbler/users.digest "Cobbler" cobbler
+sed -i 's/server: 127.0.0.1/server: cobbler.example.com/g' /etc/cobbler/settings
+
+
+# import an image
+cobbler import --name=$image_name --path=$path --arch=$arch
+
+# alternative to import
+cobbler distro add --name=$distro_name --initrd=$initrd_path --kernel=$kernel_path
+
+# cobbler profile
+cobbler profile add --name=$profile_name --distro=$distro_name --kickstart=$kickstart_path --ksmeta="url=http://@@server@@/cobbler/ks_mirror/$distro_name
+
+# cobbler add system
+cobbler system add --name=$system_name --profile=$profile_name --mac=$mac --hostname=$hostname
