@@ -1,0 +1,4 @@
+[%company]
+name=%company Repo
+baseurl=ftp://%host/repo/%os_distro/%version/$basearch
+enabled=1

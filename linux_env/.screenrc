@@ -1,2 +1,6 @@
 # this has been sourced directly from: http://superuser.com/questions/181100/how-do-i-use-tabs-with-the-linux-screen-program
 caption always "%{= kw}%-w%{= BW}%n %t%{-}%+w %-= @%H - %LD %d %LM - %c"
+bind c screen 1
+bind 0 select 10
+screen 1
+select 1

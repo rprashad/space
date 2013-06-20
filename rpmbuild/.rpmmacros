@@ -1,0 +1,7 @@
+%_topdir %(echo $HOME)/rpmbuild
+%_signature gpg
+%_gpg_name Raj Prashad
+%packager Rajendra Prashad <nprashad@gmail.com>
+%distribution Raj Prashad - Custom HTTPD
+%src_ftp = ftp://comanche.hostname/src
+
