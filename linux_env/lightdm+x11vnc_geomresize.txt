@@ -1,0 +1,18 @@
+# Lightdm + x11vnc
+[2227][nickp@comanche:~]$ cat /etc/init/x11vnc.conf 
+start on login-session-start
+script
+/usr/bin/x11vnc -scale 1600x1200 -many -shared -xkb -auth /var/run/lightdm/root/:0 -noxrecord -noxfixes -noxdamage -rfbauth /etc/x11vnc.pass -forever -bg -rfbport 5900 -o /var/log/x11vnc.log -xrandr resize
+end script
+
+# resize screen resolution
+
+[2228][nickp@comanche:~]$ cvt 1600 1200
+# 1600x1200 59.87 Hz (CVT 1.92M3) hsync: 74.54 kHz; pclk: 161.00 MHz
+Modeline "1600x1200_60.00"  161.00  1600 1712 1880 2160  1200 1203 1207 1245 -hsync +vsync
+
+[2229][nickp@comanche:~]$ xrandr --newmode "1600x1200_60.00"  161.00  1600 1712 1880 2160  1200 1203 1207 1245 -hsync +vsync
+
+xrandr --addmode VGA-1 1600x1200_60.00
+xrandr --output VGA-1 --mode 1600x1200_60.00
+

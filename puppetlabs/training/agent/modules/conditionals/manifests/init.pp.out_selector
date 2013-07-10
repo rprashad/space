@@ -1,0 +1,13 @@
+class conditionals {
+
+$outselector = $::operatingsystem ? {
+        'CentOS' => "This is a Centos Box\n",
+        'Debian' => "This is a Debian Box\n"
+}
+
+
+  file { "/tmp/os" : 
+    ensure => present,
+    content   => $outselector,
+  }
+}

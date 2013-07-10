@@ -1,0 +1,8 @@
+virt-install \
+       --name centos_dns \
+       --ram 500 \
+       --disk path=/space/VM/centos_dns.img,size=5 \
+       --network network:default \
+       --accelerate \
+       --vnc \
+       -c /space/CentOS-6.3-x86_64-minimal-EFI.iso

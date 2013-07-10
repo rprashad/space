@@ -1,0 +1,3 @@
+node 'rprashad' {
+    include users
+}

@@ -27,7 +27,8 @@ set tabstop=2 shiftwidth=2 expandtab
 filetype plugin on
 filetype indent on
 set modeline
-set mouse=a
+set mouse-=a
+"set mouse=nicr"
 set nocompatible
  
 " vimrc file for following the coding standards specified in PEP 7 & 8.
