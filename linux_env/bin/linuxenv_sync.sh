@@ -21,14 +21,16 @@ DEST=$2
 
 if [ -e "$HOME/.lastenvsync" ]
 then
+  echo "exists!"
   ODATE=`cat $HOME/.lastenvsync`
   DIFF=$(( $CDATE - $ODATE ))
 else
+  echo "dont exist!"
   DIFF=0
   echo $CDATE > $HOME/.lastenvsync
 fi
 
-if [ $DIFF -gt $LEN ]
+if [ $DIFF > $LEN ]
   then
     cd $SOURCE
     git pull
