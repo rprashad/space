@@ -43,6 +43,6 @@ if [[ $DIFF > $LEN ]]
     ln -sf "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
     echo $CDATE > $HOME/.lastenvsync
 else
-  echo "no changes yet $CDATE $DIFF"
+  # echo "no changes yet $CDATE $DIFF"
 fi
 
