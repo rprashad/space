@@ -5,44 +5,43 @@
 
 SOURCE="$HOME/git/space/linux_env/tools/"
 DEST="$HOME/bin/tools"
-LEN=86400
-#LEN=10
+LEN=3600
 CDATE=`date +%s`
+DEBUG=0
 
-if [ ! -d "$DEST" ]
-then
+if [[ ! -d "$DEST" ]]; then
   echo "Creating destination directory: $DEST"
   mkdir -p $DEST
 fi
 
 function syncit() {
-SOURCE=$1
-DEST=$2
-  for i in `ls $SOURCE`
-    do
-     echo "Syncing: $i"
-     ln -sf $SOURCE/$i $DEST/$i
+  SOURCE=$1
+  DEST=$2
+  echo "Syncing Tools"
+  cd $SOURCE
+  git pull
+  for i in `ls $SOURCE`; do
+     if [[ ! -e "/$DEST/$i" ]]; then
+       echo "Syncing: $i"
+       ln -sf $SOURCE/$i $DEST/$i
+     fi
   done
-}
+  ln -sf "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
+} # syncit
 
-if [ -e "$HOME/.lastenvsync" ]
+
+if [[ -e "$HOME/.lastenvsync" ]]
 then
   ODATE=`cat $HOME/.lastenvsync`
   DIFF=$(( $CDATE - $ODATE ))
+  if [[ $DIFF > $LEN ]]
+    then 
+      syncit $SOURCE $DEST
+      echo $CDATE > $HOME/.lastenvsync
+  fi
 else
   DIFF=0
   echo $CDATE > $HOME/.lastenvsync
-fi
-
-if [[ $DIFF > $LEN ]]
-  then
-    cd $SOURCE
-    echo "Git PULL"
-    git pull
-    syncit $SOURCE $DEST
-    ln -sf "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
-    echo $CDATE > $HOME/.lastenvsync
-else
-  # echo "no changes yet $CDATE $DIFF"
+  syncit $SOURCE $DEST
 fi
 
