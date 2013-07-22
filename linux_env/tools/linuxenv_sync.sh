@@ -3,11 +3,17 @@
 # symlink bin from github space repo "linux_env"
 # rajendra.prashad <nprashad@gmail.com>
 
-SOURCE="$HOME/git/space/linux_env/bin/"
-DEST="$HOME/bin"
+SOURCE="$HOME/git/space/linux_env/tools/"
+DEST="$HOME/bin/tools"
 LEN=86400
 #LEN=10
 CDATE=`date +%s`
+
+if [ ! -d "$DEST" ]
+then
+  echo "Creating destination directory: $DEST"
+  mkdir -p $DEST
+fi
 
 function syncit() {
 SOURCE=$1
@@ -21,18 +27,17 @@ DEST=$2
 
 if [ -e "$HOME/.lastenvsync" ]
 then
-  echo "exists!"
   ODATE=`cat $HOME/.lastenvsync`
   DIFF=$(( $CDATE - $ODATE ))
 else
-  echo "dont exist!"
   DIFF=0
   echo $CDATE > $HOME/.lastenvsync
 fi
 
-if [ $DIFF > $LEN ]
+if [[ $DIFF > $LEN ]]
   then
     cd $SOURCE
+    echo "Git PULL"
     git pull
     syncit $SOURCE $DEST
     ln -sf "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
