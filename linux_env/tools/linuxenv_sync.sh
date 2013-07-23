@@ -26,7 +26,12 @@ function syncit() {
        ln $SOURCE/$i $DEST/$i
      fi
   done
-  ln "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
+  bash_src=`md5sum $HOME/git/space/linux_env/.bash_profile | awk '{print \$1}'`;
+  bash_dst=`md5sum $HOME/.bash_profile 2> /dev/null | awk '{print \$1}'`;
+  if [[ "$bash_src" != "$bash_dst" ]]; then
+    mv "$HOME/.bash_profile" "$HOME/.bash_profile.bak" 2> /dev/null
+    ln "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
+  fi
 } # syncit
 
 
