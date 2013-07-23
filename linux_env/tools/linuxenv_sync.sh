@@ -23,10 +23,10 @@ function syncit() {
   for i in `ls $SOURCE`; do
      if [[ ! -e "/$DEST/$i" ]]; then
        echo "Syncing: $i"
-       ln -sf $SOURCE/$i $DEST/$i
+       ln $SOURCE/$i $DEST/$i
      fi
   done
-  ln -sf "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
+  ln "$HOME/git/space/linux_env/.bash_profile" "$HOME/.bash_profile"
 } # syncit
 
 
