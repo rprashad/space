@@ -16,3 +16,8 @@ linux|screen|xterm*|rxvt*)
 *)
     ;;
 esac
+
+screens=`which screen`
+if [[ ! -z "$screens" ]]; then
+  $GITBIN/goscreen.pl
+fi
