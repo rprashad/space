@@ -29,3 +29,12 @@ if [[ ! -z "$screens" ]]; then
   goscreen.pl
 fi
 
+# make custom profile.d directory
+if [[ ! -d $HOME/.profile.d ]]; then
+  mkdir $HOME/.profile.d;
+else
+  for i in `ls $HOME/.profile.d/`; do
+    source $HOME/.profile.d/$i
+  done
+fi
+
