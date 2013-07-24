@@ -68,7 +68,6 @@ function syncfile() {
 function synctools() {
   SOURCE=$1
   DEST=$2
-  cwd=`pwd`;
   cd $SOURCE
   # may/may not be a git repo
   git pull 2> /dev/null
@@ -79,7 +78,6 @@ function synctools() {
        syncfile $S $D
      fi
   done
-  cd $cwd
 } # synctools
 
 function syncall() {
@@ -138,4 +136,5 @@ timesync
 screen_sessions
 # check for local/alt profiles
 altprofiles
-
+###################
+cd $HOME
