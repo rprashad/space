@@ -4,6 +4,40 @@ PATH=$PATH:$HOME/bin:$HOME/bin/tools:/usr/bin:/usr/sbin:/usr/local/bin:/bin:/sbi
 export PERL5LIB=/data/ops/lib/:$HOME/space/perl
 export PYTHONPATH=$HOME/space/python
 
+# hide a file
+function dot() {
+  file=$1
+
+  if [[ $file =~ ^[.] ]]; then
+    echo "file $file already dotted"
+  else
+    dfile=".$file"
+    mv $file $dfile 2> /dev/null
+    if [[ -e $dfile ]]; then
+      echo "$dfile dotted"
+    else 
+      echo "cannot find dotfile ('.$dfile')"
+    fi
+  fi
+}
+
+# unhide
+function undot() {
+  file=$1
+
+  if [[ $file =~ ^[.] ]]; then
+    udfile=`echo $file | sed 's/^\.//'`
+    mv $file $udfile 2> /dev/null
+    if [[ -e $udfile ]]; then
+      echo ".$udfile undotted"
+    else 
+      echo "cannot find undotfile ('$udfile')"
+    fi
+  else
+    echo "$file not matched!"
+  fi
+}
+
 function bootstrap() {
   if [[ ! -d "$HOME/git/space" ]]; then
     mkdir -p "$HOME/git/space"
@@ -88,7 +122,7 @@ function syncall() {
   synctools $linux_tools_src $linux_tools_dst
 
 # sync .bash_profile
-  bash_src="$HOME/git/space/linux_env/.bash_profile"
+  bash_src="$HOME/git/space/linux_env/profile.d/.bash_profile"
   bash_dst="$HOME/.bash_profile"
   syncfile $bash_src $bash_dst
 
@@ -125,6 +159,7 @@ function timesync() {
   fi
 }
 
+export dot undot
 ################################ END FUNCTIONS
 # setps1
 setps1
