@@ -1,0 +1,30 @@
+[ 
+  { "product_id" : "colt",
+    "amount_sold" : "5",
+    "image_location" : "undef"
+  },
+  { "product_id" : "preston",
+    "amount_sold" : "10",
+    "image_location" : "undef"
+  },
+  { "product_id" : "lanisters",
+    "amount_sold" : "15",
+    "image_location" : "undef"
+  },
+  { "product_id" : "starks",
+    "amount_sold" : "20",
+    "image_location" : "undef"
+  },
+  { "product_id" : "frodo",
+    "amount_sold" : "25",
+    "image_location" : "undef"
+  },
+  { "product_id" : "winston",
+    "amount_sold" : "30",
+    "image_location" : "undef"
+  },
+  { "product_id" : "clark",
+    "amount_sold" : "35",
+    "image_location" : "undef"
+  }
+]
