@@ -3,6 +3,7 @@
 PATH=$PATH:$HOME/bin:$HOME/bin/tools:/usr/bin:/usr/sbin:/usr/local/bin:/bin:/sbin
 export PERL5LIB=/data/ops/lib/:$HOME/space/perl
 export PYTHONPATH=$HOME/space/python
+alias jsoncheck='python -mjson.tool'
 
 # hide a file
 function dot() {
