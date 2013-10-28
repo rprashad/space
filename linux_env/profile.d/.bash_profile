@@ -54,9 +54,9 @@ function bootstrap() {
     if [[ $? == 0 ]] ; then
       cd $HOME/git
       git clone http://github.com/rprashad/space space
-    fi
   else
     echo "bootstrap error ocurred"
+  fi
   fi
 }
 
