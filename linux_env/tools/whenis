@@ -1,0 +1,93 @@
+#!/usr/bin/perl
+#
+## script borrowed from the Dread Pirate Niko Janceski
+
+use strict;
+use warnings;
+use autouse 'Data::Dumper' => 'Dumper';
+use Carp;
+# use CGI qw(:standard);
+# use CGI::Carp 'fatalsToBrowser';
+use Getopt::Long qw(:config auto_help);
+
+use Date::Manip;
+
+# if ($^O =~ /^(ms)?(win|dos)(32|nt)?$/i){
+
+### GLOBAL VARIABLES
+my $SETTING = {};
+
+GetOptions($SETTING, qw( debug|verbose ));
+
+die <<EOF unless @ARGV;
+  USAGE: $0 <time spec>
+  Converts a time to/from epoch, human readable.
+EOF
+
+my $time = "@ARGV";
+
+# date is a  export data (YYYYMMDDHHMMSS)
+if( $time =~ /^\d{11,}$/ ){
+    if( my($year, $mon, $day, $hour, $min, $sec) = $time =~ /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/ ){
+        $time = "$mon/$day/$year $hour:$min:$sec";
+    } else {
+        die "Unknown date/time format @ARGV";
+    }
+}
+
+my $dmDate;
+if( $time !~ /^\d+$/){
+  $dmDate = $time = ParseDateString($time);
+  die "'@ARGV' is not understood\n" unless $time;
+  $time = UnixDate($time, "%s"); # convert to epoch time.
+} else {
+  $dmDate = ParseDateString(scalar localtime($time));
+}
+
+print "Epoch time: $time\n";
+print "Local time: ", UnixDate($dmDate, "%u"), "\n"; 
+
+my ($year, $month, $day) = (localtime($time))[5,4,3];
+$year += 1900;
+$month++;
+print "DATE: ", join("-", $year, $month, $day), "\n";
+print "FQ: " . sprintf(" %04i%02i%02i\n", $year, $month, $day);
+my @format = qw(%yt %Mt %wt %dt %ht %mt %st);
+print "Approximately ";
+
+my @desc = qw( year month week day hour minute second );
+my $value;
+for(my $i=0; $i < @format; $i++){
+    if( $Date::Manip::VERSION >= 6.12 ){
+        ($value) = Delta_Format(DateCalc($dmDate, "now"), 'approx', 0, $format[$i]);
+    } else {
+        ($value) = int Delta_Format(DateCalc($dmDate, "now"), 0, $format[$i]);
+    }
+    my $abs = abs($value);
+    next unless $abs;
+    print $abs, " ", $desc[$i], ($abs ==1 ? "" : "s");
+    last;
+}
+
+if( $value > 0 ){
+    print " ago\n";
+} else {
+    print " in the FUTURE!\n";
+}
+
+sub debug {
+
+my(@args) = @_;
+
+foreach my $arg (@args){
+  if( ref( $arg ) ){
+    print "DEBUG START:\n", Dumper( $arg );
+    print "DEBUG END\n";
+  } else {
+    print "DEBUG: $arg\n";
+  }
+}
+
+return unless $SETTING->{debug};
+
+}
