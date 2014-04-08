@@ -4,8 +4,8 @@ PATH=$PATH:$HOME/bin:$HOME/bin/tools:/usr/bin:/usr/sbin:/usr/local/bin:/bin:/sbi
 export PERL5LIB=/data/ops/lib/:$HOME/space/perl
 export PYTHONPATH=$HOME/space/python
 alias jsoncheck='python -mjson.tool'
-declare -A fgcolor
-declare -A bgcolor
+declare -a fgcolor
+declare -a bgcolor
 fgchoice=""
 bgchoice=""
 fgcolor=( [black]=30 [red]=31 [green]=32 [yellow]=33 [blue]=34 [magenta]=35 [cyan]=36 [white]=37 )
@@ -224,7 +224,7 @@ function timesync() {
 export dot undot
 ################################ END FUNCTIONS
 # setps1
-setps1
+# setps1
 # grab github tools
 bootstrap
 # sync only by time
