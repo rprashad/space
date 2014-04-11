@@ -1,0 +1,10 @@
+# accept key
+salt-key -A
+# ping all minions
+salt '*' test.ping
+# list jobs
+salt-run jobs.list_jobs
+# lookup specific job
+salt-run jobs.lookup_jid <jid>
+# if master is busy, requests will take time, to ensure the cli doesn't timeout
+salt -t 60 '*' test.ping
