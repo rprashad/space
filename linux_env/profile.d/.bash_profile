@@ -61,9 +61,16 @@ function bootstrap() {
 }
 
 
-function setps1() {
+function setcolor() {
   fgchoice=$1
   bgchoice=$2
+  osx=`uname | grep -i darwin | wc -l`
+
+  if [[ $osx -eq 1 ]]; then
+    echo "not setting colors"
+    return
+  fi 
+
 
   if [[ -z $fgchoice ]]; then
     fgchoice=$deffg
@@ -86,17 +93,30 @@ function setps1() {
   case "$TERM" in
   linux|screen|xterm*|rxvt*)
        # PS1="\[\033[${fgcolor[${fgchoice}]}m\][\$(date +%H%M)][\u@\h:\w]$ "
-	PS1="\[\033[${fgcolor[${fgchoice}]}m\033[${bgcolor[${bgchoice}]}m\][\$(date +%H%M)][\u@\h:\w]$ "
+       PS1="\[\033[${fgcolor[${fgchoice}]}m\033[${bgcolor[${bgchoice}]}m\][\$(date +%mm%dd)][\u@\h:\w]$ "
+       
       ;;
   *)
       ;;
   esac
-} # setps1
+} # setcolor
+
+function setps1() {
+
+  case "$TERM" in
+  linux|screen|xterm*|rxvt*)
+       PS1="[\$(date +%H%M)][\u@\h:\w]$ "
+      ;;
+  *)
+      ;;
+  esac
+
+}
 
 function screen_sessions() {
   screens=`which screen | grep -iv No`
   if [[ ! -z "$screens" ]]; then
-    goscreen.pl
+    $HOME/git/space/linux_env/tools/goscreen.pl
   fi
 } # screen_sessions
 
@@ -224,7 +244,7 @@ function timesync() {
 export dot undot
 ################################ END FUNCTIONS
 # setps1
-# setps1
+setps1
 # grab github tools
 bootstrap
 # sync only by time
