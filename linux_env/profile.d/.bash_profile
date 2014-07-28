@@ -13,6 +13,9 @@ bgcolor=( [black]=40 [red]=41 [green]=42 [yellow]=43 [blue]=44 [magenta]=45 [cya
 defbg=white
 deffg=black
 
+# fix window sizes
+shopt -s checkwinsize
+
 
 # hide a file
 function dot() {
@@ -255,3 +258,4 @@ screen_sessions
 altprofiles
 ###################
 cd $HOME
+export EDITOR=vim
