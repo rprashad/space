@@ -143,8 +143,8 @@ function syncfile() {
 } # syncfile
 
 function syncdir () {
-  SOURCE=$1
-  DEST=$2
+  SYNC_SOURCE=$1
+  SYNC_DEST=$2
 
   echo "Syncing Directory $SYNC_SOURCE -> $SYNC_DEST"
   rsync -ap $SYNC_SOURCE $SYNC_DEST
@@ -220,6 +220,19 @@ function timesync() {
     echo $CDATE > $HOME/.lastenvsync
     syncall
   fi
+}
+
+function resetsync() {
+ SYNCFILE="$HOME/.lastenvsync"
+ if [[ -e "$SYNCFILE" ]]; then
+   echo "Removing $SYNCFILE"
+   rm $SYNCFILE
+ fi
+ echo "Removing old profile"
+ rm $HOME/.bash_profile
+ syncfile $HOME/git/space/linux_env/profile.d/.bash_profile $HOME/.bash_profile
+ echo "Setting new profile"
+ source $HOME/.bash_profile
 }
 
 export dot undot
