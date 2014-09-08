@@ -108,7 +108,8 @@ function setps1() {
 
   case "$TERM" in
   linux|screen|xterm*|rxvt*)
-       PS1="[\$(date +%H%M)][\u@\h:\w]$ "
+       # PS1="[\$(date +%H%M)][\u@\h:\w]$ "
+       PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
       ;;
   *)
       ;;
@@ -211,6 +212,12 @@ function syncall() {
   bash_dst="$HOME/.bash_profile"
   syncfile $bash_src $bash_dst
 
+# sync .profile.d files
+  # git prompt
+  githelper_src="$HOME/git/space/linux_env/profile.d/git-prompt.sh"
+  githelper_dst="$HOME/.profile.d"
+  syncfile $githelper_src $githelper_dst
+
 # sync .screenrc
   screen_src="$HOME/git/space/linux_env/.screenrc"
   screen_dst="$HOME/.screenrc"
@@ -258,4 +265,4 @@ screen_sessions
 altprofiles
 ###################
 cd $HOME
-export EDITOR=vim
+export EDITOR=`which vim`
