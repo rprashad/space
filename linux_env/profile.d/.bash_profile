@@ -197,7 +197,7 @@ function syncall() {
 # sync .vimrc
   vim_src="$HOME/git/space/linux_env/.vimrc"
   vim_dst="$HOME/.vimrc"
-  syncfile $screen_src $screen_dst
+  syncfile $vim_src $vim_dst
 
 }
 
