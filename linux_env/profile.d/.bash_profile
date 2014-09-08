@@ -138,25 +138,17 @@ function syncfile() {
   SYNC_SOURCE=$1
   SYNC_DEST=$2
 
-  echo "Syncing $SYNC_SOURCE -> $SYNC_DEST"
-  rsync -v --suffix=.bak $SYNC_SOURCE $SYNC_DEST
+  echo "Syncing File $SYNC_SOURCE -> $SYNC_DEST"
+  rsync --suffix=.bak $SYNC_SOURCE $SYNC_DEST
 } # syncfile
 
-function synctools() {
+function syncdir () {
   SOURCE=$1
   DEST=$2
-  cd $SOURCE
-  # may/may not be a git repo
-  git pull 2> /dev/null
-  git checkout master 2> /dev/null
-   for i in `ls $SOURCE`; do
-     if [[ ! -e "/$DEST/$i" ]]; then
-       S="$SOURCE/$i"
-       D="$DEST/$i"
-       syncfile $S $D
-     fi
-  done
-} # synctools
+
+  echo "Syncing Directory $SYNC_SOURCE -> $SYNC_DEST"
+  rsync -ap $SYNC_SOURCE $SYNC_DEST
+} # syncdir
 
 function allcolors() {
   # stolen shamelessly from 
@@ -182,9 +174,9 @@ function allcolors() {
 function syncall() {
 # sync tools dir
   linux_tools_src="$HOME/git/space/linux_env/tools"
-  linux_tools_dst="$HOME/bin/tools"
+  linux_tools_dst="$HOME/bin/"
   mkdir -p $linux_tools_dst
-  synctools $linux_tools_src $linux_tools_dst
+  syncdir $linux_tools_src $linux_tools_dst
 
 # sync .bash_profile
   bash_src="$HOME/git/space/linux_env/profile.d/.bash_profile"
