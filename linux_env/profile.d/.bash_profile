@@ -16,7 +16,6 @@ deffg=black
 # fix window sizes
 shopt -s checkwinsize
 
-
 # hide a file
 function dot() {
   file=$1
@@ -135,33 +134,12 @@ function altprofiles() {
   fi
 } # altprofiles
 
-function mkdestdir() {
-  DEST=$1
-  if [[ ! -d "$DEST" ]]; then
-    echo "Creating destination directory: $DEST"
-    mkdir -p $DEST
-  fi
-
-} # makedestdir
-
 function syncfile() {
   SYNC_SOURCE=$1
   SYNC_DEST=$2
-  BAK="$SYNC_DEST.bak"
 
-  if [[ -e $SYNC_SOURCE ]]; then
-    # echo "SRC: $SYNC_SOURCE DST: $SYNC_DEST BAK: $BAK"
-    md5_src=`md5sum $SYNC_SOURCE 2> /dev/null | awk '{print \$1}'`;
-    md5_dst=`md5sum $SYNC_DEST 2> /dev/null | awk '{print \$1}'`;
-
-    if [[ "$md5_src" != "$md5_dst" ]]; then
-      mv $SYNC_DEST $BAK 2> /dev/null
-      echo "Syncing $SYNC_SOURCE -> $SYNC_DEST"
-      ln $SYNC_SOURCE $SYNC_DEST
-    fi
-  else
-    echo "Not syncing source $SYNC_SOURCE does not exist"
-  fi
+  echo "Syncing $SYNC_SOURCE -> $SYNC_DEST"
+  rsync -v --suffix=.bak $SYNC_SOURCE $SYNC_DEST
 } # syncfile
 
 function synctools() {
@@ -170,6 +148,7 @@ function synctools() {
   cd $SOURCE
   # may/may not be a git repo
   git pull 2> /dev/null
+  git checkout master 2> /dev/null
    for i in `ls $SOURCE`; do
      if [[ ! -e "/$DEST/$i" ]]; then
        S="$SOURCE/$i"
@@ -204,7 +183,7 @@ function syncall() {
 # sync tools dir
   linux_tools_src="$HOME/git/space/linux_env/tools"
   linux_tools_dst="$HOME/bin/tools"
-  mkdestdir $linux_tools_dst
+  mkdir -p $linux_tools_dst
   synctools $linux_tools_src $linux_tools_dst
 
 # sync .bash_profile
