@@ -1,6 +1,5 @@
 " This vimrc file has been sourced directly from: http://www.codedanger.com/caglar/archives/409
 " syntax highlighting
-set bg=light
 syntax on
  
 set ruler
@@ -137,3 +136,4 @@ let perl_extended_vars = 1
 " Fold the code block when <F2> is pressed
 set foldmethod=marker
 nmap <F2> 0v/{<CR>%zf
+set bg=light
