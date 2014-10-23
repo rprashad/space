@@ -4,14 +4,6 @@ PATH=$PATH:$HOME/bin:$HOME/bin/tools:/usr/bin:/usr/sbin:/usr/local/bin:/bin:/sbi
 export PERL5LIB=/data/ops/lib/:$HOME/space/perl
 export PYTHONPATH=$HOME/space/python
 alias jsoncheck='python -mjson.tool'
-declare -a fgcolor
-declare -a bgcolor
-fgchoice=""
-bgchoice=""
-fgcolor=( [black]=30 [red]=31 [green]=32 [yellow]=33 [blue]=34 [magenta]=35 [cyan]=36 [white]=37 )
-bgcolor=( [black]=40 [red]=41 [green]=42 [yellow]=43 [blue]=44 [magenta]=45 [cyan]=46 [grey]=47 )
-defbg=white
-deffg=black
 
 # fix window sizes
 shopt -s checkwinsize
@@ -62,59 +54,60 @@ function bootstrap() {
   fi
 }
 
-
-function setcolor() {
+function setps1() {
   fgchoice=$1
   bgchoice=$2
-  osx=`uname | grep -i darwin | wc -l`
 
-  if [[ $osx -eq 1 ]]; then
-    echo "not setting colors"
-    return
-  fi 
-
-
-  if [[ -z $fgchoice ]]; then
-    fgchoice=$deffg
-  else if [[ -z ${fgcolor[$fgchoice]} ]]; then
-    echo "fg choice '$fgchoice' - does not exist, setting default: $deffg"
-    fgchoice=$deffg
-  fi
-  fi
-
-  if [[ -z $bgchoice ]]; then
-    bgchoice=$defbg
-  else if [[ -z ${bgcolor[$bgchoice]} ]]; then
-    echo "bg choice '$bgchoice' - does not exist, setting default: $defbg"
-    bgchoice=$defbg
-  fi
+  if [[ $fgchoice == "white" ]]; then
+    fg=37
+  elif [[ $fgchoice == "red" ]]; then
+    fg=31
+  elif [[ $fgchoice == "green" ]]; then
+    fg=32
+  elif [[ $fgchoice == "yellow" ]]; then
+    fg=33
+  elif [[ $fgchoice == "blue" ]]; then
+    fg=34
+  elif [[ $fgchoice == "magenta" ]]; then
+    fg=35
+  elif [[ $fgchoice == "cyan" ]]; then
+    fg=36
+  else
+    # black
+    fg=30
   fi
 
-   echo "BG: $bgchoice: FG: $fgchoice"
+  if [[ $bgchoice == "black" ]]; then
+    bg=40
+  elif [[ $bgchoice == "red" ]]; then
+    bg=41
+  elif [[ $bgchoice == "green" ]]; then
+    bg=42
+  elif [[ $bgchoice == "yellow" ]]; then
+    bg=43
+  elif [[ $bgchoice == "blue" ]]; then
+    bg=44
+  elif [[ $bgchoice == "magenta" ]]; then
+    bg=45
+  elif [[ $bgchoice == "cyan" ]]; then
+    bg=46
+  else 
+    # white/grey
+    bg=47
+  fi
 
+  echo "FG $fgchoice ($fg) BG $bgchoice ($bg)"
   case "$TERM" in
   linux|screen|xterm*|rxvt*)
-       # PS1="\[\033[${fgcolor[${fgchoice}]}m\][\$(date +%H%M)][\u@\h:\w]$ "
-       PS1="\[\033[${fgcolor[${fgchoice}]}m\033[${bgcolor[${bgchoice}]}m\][\$(date +%mm%dd)][\u@\h:\w]$ "
-       
+       color="\[\033[${bg}m\]\[\e[1;${fg}m\]"
+       prompt='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
+       PS1="${color}${prompt}"
       ;;
   *)
+      PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
       ;;
   esac
-} # setcolor
-
-function setps1() {
-
-  case "$TERM" in
-  linux|screen|xterm*|rxvt*)
-       # PS1="[\$(date +%H%M)][\u@\h:\w]$ "
-       PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
-      ;;
-  *)
-      ;;
-  esac
-
-}
+} # setps1
 
 function screen_sessions() {
   screens=`which screen | grep -iv No`
@@ -229,11 +222,16 @@ function resetsync() {
    rm $SYNCFILE
  fi
  echo "Removing old profile"
- rm $HOME/.bash_profile
  syncfile $HOME/git/space/linux_env/profile.d/.bash_profile $HOME/.bash_profile
  echo "Setting new profile"
- source $HOME/.bash_profile
+ source $HOME/git/space/linux_env/profile.d/.bash_profile
 }
+
+function goprofile() {
+  vim $HOME/git/space/linux_env/profile.d/.bash_profile
+}
+
+export goprofile
 
 export dot undot
 ################################ END FUNCTIONS
