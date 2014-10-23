@@ -60,8 +60,8 @@ function setps1() {
   prompt='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
 
   if [[ $fgchoice == "default" ]]; then
-      echo "setting default"
-      PS1=$prompt
+      export PS1=$prompt
+      echo "default set"
       return
   elif [[ $fgchoice == "white" ]]; then
     fg=37
