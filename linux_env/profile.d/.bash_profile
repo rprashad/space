@@ -90,7 +90,7 @@ function setcolor() {
   fi
   fi
 
-   echo "BG: $bgchoice: FG: $fgchoice"
+  echo "BG: $bgchoice (${bgcolor[$bgchoice]}) FG: $fgchoice (${fgcolor[$fgchoice]}"
 
   case "$TERM" in
   linux|screen|xterm*|rxvt*)
@@ -199,6 +199,10 @@ function syncall() {
   vim_dst="$HOME/.vimrc"
   syncfile $vim_src $vim_dst
 
+# sync vimset.sh
+  vimset_src="$HOME/git/space/linux_env/profile.d/vimset.sh"
+  vimset_dst="$HOME/.profile.d/vimset.sh"
+  syncfile $vimset_src $vimset_dst
 }
 
 function timesync() {
@@ -230,7 +234,7 @@ function resetsync() {
  fi
  echo "Removing old profile"
  rm $HOME/.bash_profile
- syncfile $HOME/git/space/linux_env/profile.d/.bash_profile $HOME/.bash_profile
+ cp $HOME/git/space/linux_env/profile.d/.bash_profile $HOME/.bash_profile
  echo "Setting new profile"
  source $HOME/.bash_profile
 }
