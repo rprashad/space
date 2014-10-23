@@ -137,3 +137,4 @@ let perl_extended_vars = 1
 set foldmethod=marker
 nmap <F2> 0v/{<CR>%zf
 set bg=light
+execute pathogen#infect()
