@@ -57,8 +57,13 @@ function bootstrap() {
 function setps1() {
   fgchoice=$1
   bgchoice=$2
+  prompt='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
 
-  if [[ $fgchoice == "white" ]]; then
+  if [[ $fgchoice == "default" ]]; then
+      echo "setting default"
+      PS1=$prompt
+      return
+  elif [[ $fgchoice == "white" ]]; then
     fg=37
   elif [[ $fgchoice == "red" ]]; then
     fg=31
@@ -100,11 +105,10 @@ function setps1() {
   case "$TERM" in
   linux|screen|xterm*|rxvt*)
        color="\[\033[${bg}m\]\[\e[1;${fg}m\]"
-       prompt='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
        PS1="${color}${prompt}"
       ;;
   *)
-      PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
+      PS1=$prompt
       ;;
   esac
 } # setps1
@@ -165,6 +169,12 @@ function allcolors() {
 } # allcolors
 
 function syncall() {
+
+# sync .profile.d files
+  profiled_src="$HOME/git/space/linux_env/profile.d/"
+  profiled_dst="$HOME/.profile.d"
+  syncdir $profiled_src $profiled_dst
+
 # sync tools dir
   linux_tools_src="$HOME/git/space/linux_env/tools"
   linux_tools_dst="$HOME/bin/"
@@ -175,12 +185,6 @@ function syncall() {
   bash_src="$HOME/git/space/linux_env/profile.d/.bash_profile"
   bash_dst="$HOME/.bash_profile"
   syncfile $bash_src $bash_dst
-
-# sync .profile.d files
-  # git prompt
-  githelper_src="$HOME/git/space/linux_env/profile.d/git-prompt.sh"
-  githelper_dst="$HOME/.profile.d"
-  syncfile $githelper_src $githelper_dst
 
 # sync .screenrc
   screen_src="$HOME/git/space/linux_env/.screenrc"
@@ -229,6 +233,10 @@ function resetsync() {
 
 function goprofile() {
   vim $HOME/git/space/linux_env/profile.d/.bash_profile
+}
+
+function goenv() {
+  cd $HOME/git/space/linux_env/profile.d/
 }
 
 export goprofile
