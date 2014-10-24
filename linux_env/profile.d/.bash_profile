@@ -61,6 +61,7 @@ function setps1() {
 
   if [[ $fgchoice == "default" ]]; then
       export PS1=$prompt
+      reset
       echo "default set"
       return
   elif [[ $fgchoice == "white" ]]; then
