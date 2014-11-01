@@ -10,7 +10,7 @@ if [[ ! -d "$HOME/.vim/bundle/nerdtree" ]]; then
   git clone https://github.com/scrooloose/nerdtree.git
 fi
 
-if [[ ! -d "$HOME/.vim/bundle/vimrails" ]]; then
+if [[ ! -d "$HOME/.vim/bundle/vim-rails" ]]; then
   echo "Adding VIMRails"
   cd $HOME/.vim/bundle
   git clone git://github.com/tpope/vim-rails.git
