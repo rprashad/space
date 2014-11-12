@@ -22,3 +22,9 @@ if [[ ! -d "$HOME/.vim/bundle/vim-ruby" ]]; then
   cd $HOME/.vim/bundle
   git clone git://github.com/vim-ruby/vim-ruby.git
 fi
+
+if [[ ! -d "$HOME/.vim/bundle/vim-fugitive" ]]; then
+  echo "Adding VIM Fugitive"
+  cd $HOME/.vim/bundle
+  git clone git://github.com/tpope/vim-fugitive.git
+fi
