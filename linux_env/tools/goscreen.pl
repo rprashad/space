@@ -27,6 +27,10 @@ if (scalar(@screens) > 0) {
           print "Reattaching Screen: $session ($choice)\n";
           `screen -r $session`;
         }
+        elsif ($screens[$choice -1] =~ /Multi/) {
+          print "Sharing session: $session ($choice)\n";
+         `screen -x $session`;
+        }
         else {
           print "Stealing session: $session\n";
           `screen -dRR $session`;
