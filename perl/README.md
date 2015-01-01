@@ -9,6 +9,7 @@ Container::INI -  create beautifully complex (nested data structures) from an IN
                   * multitude of uses (dependency injection, etc.)
 
 # config
+```
 [header::example::1]
 address.street=1 Individual Way
 address.city=Your Town
@@ -18,15 +19,19 @@ name.first=Rajendra
 name.last=Prashad
 os.unix.linux=Debian, Centos, Gentoo, Mint
 os.unix.bsd=FreeBSD, NetBSD, OpenBSD
+```
 
 # code
+```
 use Container::INI;
 use Data::Dumper;
 
 my $ini = new Container::INI("example1.ini");
 print Dumper $ini->get_config;
+```
 
 # output
+```
 $VAR1 = {
           'header' => {
                         'example' => {
@@ -60,4 +65,4 @@ $VAR1 = {
                                      }
                       }
         };
-
+```
