@@ -4,6 +4,7 @@ PATH=$PATH:$HOME/bin:$HOME/bin/tools:/usr/bin:/usr/sbin:/usr/local/bin:/bin:/sbi
 export PERL5LIB=/data/ops/lib/:$HOME/space/perl
 export PYTHONPATH=$HOME/space/python
 alias jsoncheck='python -mjson.tool'
+source ~/.profile.d/git-prompt.sh
 
 # fix window sizes
 shopt -s checkwinsize
@@ -249,7 +250,7 @@ export goprofile
 export dot undot
 ################################ END FUNCTIONS
 # setps1
-setps1
+setps1 default
 # grab github tools
 bootstrap
 # sync only by time
