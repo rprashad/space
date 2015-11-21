@@ -28,3 +28,9 @@ if [[ ! -d "$HOME/.vim/bundle/vim-fugitive" ]]; then
   cd $HOME/.vim/bundle
   git clone git://github.com/tpope/vim-fugitive.git
 fi
+
+if [[ ! -d "$HOME/.vim/bundle/vim-javascript" ]]; then
+  echo "Adding VIM Javascript"
+  cd $HOME/.vim/bundle
+  git clone https://github.com/pangloss/vim-javascript.git ~/.vim/bundle/vim-javascript
+fi
