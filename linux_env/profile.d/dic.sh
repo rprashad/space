@@ -1,9 +1,10 @@
-dic="/usr/share/stardict/dic/"
+DICTIONARY="/usr/local/share/stardict"
 
-if [[ ! -d "$dic" ]]; then
-  echo "Making dictionary directory: $dic"
-  sudo mkdir -p /usr/share/stardict/dic/
-  sudo rsync -av $HOME/git/space/linux_env/dictionary/ /usr/share/stardict/dic/
+if [[ ! -d "$DICTIONARY" ]]; then
+  echo "Making directory: $DICTIONARY"
+  sudo mkdir -p $DICTIONARY
+  sudo rsync -av $HOME/git/space/linux_env/dictionary/ $DICTIONARY
   echo "Dictionary Added, please install sdcv"
 fi
 
+alias sdcv="sdcv -2 ${DICTIONARY}"
