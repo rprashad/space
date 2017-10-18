@@ -1,36 +1,46 @@
-if [[ ! -d "$HOME/.vim/autoload" ]]; then
-  echo "Adding Pathogen"
-  mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-  curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-fi
+AUTOLOAD_DIR="$HOME/.vim/autoload"
+PLUGIN_DIR="$HOME/.vim/bundle"
+declare -A PLUGINS
+PLUGINS=(
+          ["nerdtree"]="https://github.com/scrooloose/nerdtree"
+          ["vim-rails"]="git://github.com/tpope/vim-rails.git"
+          ["vim-bundler"]="git://github.com/tpope/vim-bundler.git"
+          ["vim-ruby"]="git://github.com/vim-ruby/vim-ruby.git"
+          ["vim-fugitive"]="git://github.com/tpope/vim-fugitive.git"
+          ["vim-javascript"]="https://github.com/pangloss/vim-javascript.git"
+          ["vim-go"]="https://github.com/fatih/vim-go.git"
+          ["jedi-vim"]="https://github.com/davidhalter/jedi-vim.git"
+)
 
-if [[ ! -d "$HOME/.vim/bundle/nerdtree" ]]; then
-  echo "Adding NERDTree"
-  cd $HOME/.vim/bundle
-  git clone https://github.com/scrooloose/nerdtree.git
-fi
+function fetch_plugin {
+  plugin_name=$1
+  plugin_gitrepo=$2
+  plugin_path="${PLUGIN_DIR}/${plugin_name}"
 
-if [[ ! -d "$HOME/.vim/bundle/vim-rails" ]]; then
-  echo "Adding VIMRails"
-  cd $HOME/.vim/bundle
-  git clone git://github.com/tpope/vim-rails.git
-  git clone git://github.com/tpope/vim-bundler.git
-fi
+  if [[ ! -d "$plugin_path" ]]; then
+    mkdir -p $plugin_path
+    echo "Adding VIM Plugin: ${plugin_name}"
+    cd $PLUGIN_DIR
+    git clone $plugin_gitrepo
+    echo "#################################"
+  fi
 
-if [[ ! -d "$HOME/.vim/bundle/vim-ruby" ]]; then
-  echo "Adding VIMRails"
-  cd $HOME/.vim/bundle
-  git clone git://github.com/vim-ruby/vim-ruby.git
-fi
+}
 
-if [[ ! -d "$HOME/.vim/bundle/vim-fugitive" ]]; then
-  echo "Adding VIM Fugitive"
-  cd $HOME/.vim/bundle
-  git clone git://github.com/tpope/vim-fugitive.git
-fi
+function load_pathogen {
+  if [[ ! -d "$AUTOLOAD_DIR" ]]; then
+    mkdir -p $AUTOLOAD_DIR
+    echo "Adding Pathogen"
+    curl -LSso $AUTOLOAD_DIR/pathogen.vim https://tpo.pe/pathogen.vim
+  fi
+}
 
-if [[ ! -d "$HOME/.vim/bundle/vim-javascript" ]]; then
-  echo "Adding VIM Javascript"
-  cd $HOME/.vim/bundle
-  git clone https://github.com/pangloss/vim-javascript.git ~/.vim/bundle/vim-javascript
-fi
+function load_plugins {
+  for plugin in "${!PLUGINS[@]}"; do
+    fetch_plugin $plugin "${PLUGINS[$plugin]}"
+  done
+
+}
+
+load_pathogen
+load_plugins

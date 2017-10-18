@@ -79,9 +79,6 @@ function setps1() {
     fg=35
   elif [[ $fgchoice == "cyan" ]]; then
     fg=36
-  else
-    # black
-    fg=30
   fi
 
   if [[ $bgchoice == "black" ]]; then
@@ -98,22 +95,22 @@ function setps1() {
     bg=45
   elif [[ $bgchoice == "cyan" ]]; then
     bg=46
-  else 
-    # white/grey
-    bg=47
   fi
 
-  echo "FG $fgchoice ($fg) BG $bgchoice ($bg)"
-  case "$TERM" in
-  linux|screen|xterm*|rxvt*)
-       color="\[\033[${bg}m\]\[\e[1;${fg}m\]"
-       PS1="${color}${prompt}"
-      ;;
-  *)
-      PS1=$prompt
-      ;;
-  esac
-} # setps1
+  if [[ "$fgchoice" ]] && [[ "$bgchoice" ]]; then
+    echo "FG $fgchoice ($fg) BG $bgchoice ($bg)"
+    case "$TERM" in
+    linux|screen|xterm*|rxvt*)
+         color="\[\033[${bg}m\]\[\e[1;${fg}m\]"
+         PS1="${color}${prompt}"
+        ;;
+    *)
+        PS1=$prompt
+        ;;
+    esac
+    # setps1
+fi
+}
 
 function screen_sessions() {
   screens=`which screen | grep -iv No`
@@ -213,7 +210,7 @@ function timesync() {
   then
     ODATE=`cat $HOME/.lastenvsync`
     DIFF=$(( $CDATE - $ODATE ))
-    if [[ $DIFF > $LEN ]]
+    if [[ $DIFF -gt $LEN ]]
       then
         syncall
         echo $CDATE > $HOME/.lastenvsync
@@ -249,8 +246,6 @@ export goprofile
 
 export dot undot
 ################################ END FUNCTIONS
-# setps1
-setps1 default
 # grab github tools
 bootstrap
 # sync only by time
