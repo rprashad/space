@@ -1,10 +1,8 @@
+#!/usr/bin/env bash
 ### Rajendra Prashad 
 
 PATH=$PATH:$HOME/bin:$HOME/bin/tools:/usr/bin:/usr/sbin:/usr/local/bin:/bin:/sbin
-export PERL5LIB=/data/ops/lib/:$HOME/space/perl
-export PYTHONPATH=$HOME/space/python
 alias jsoncheck='python -mjson.tool'
-source ~/.profile.d/git-prompt.sh
 
 # fix window sizes
 shopt -s checkwinsize
@@ -112,13 +110,6 @@ function setps1() {
 fi
 }
 
-function screen_sessions() {
-  screens=`which screen | grep -iv No`
-  if [[ ! -z "$screens" ]]; then
-    $HOME/git/space/linux_env/tools/goscreen.pl
-  fi
-} # screen_sessions
-
 function altprofiles() {
 # make custom profile.d directory
   if [[ ! -d $HOME/.profile.d ]]; then
@@ -145,27 +136,6 @@ function syncdir () {
   echo "Syncing Directory $SYNC_SOURCE -> $SYNC_DEST"
   rsync -ap $SYNC_SOURCE $SYNC_DEST
 } # syncdir
-
-function allcolors() {
-  # stolen shamelessly from 
-  # http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
-
-  T='gYw'   # The test text
-  echo -e "\n                 40m     41m     42m     43m\
-       44m     45m     46m     47m";
-
-  for FGs in '    m' '   1m' '  30m' '1;30m' '  31m' '1;31m' '  32m' \
-             '1;32m' '  33m' '1;33m' '  34m' '1;34m' '  35m' '1;35m' \
-             '  36m' '1;36m' '  37m' '1;37m';
-    do FG=${FGs// /}
-    echo -en " $FGs \033[$FG  $T  "
-    for BG in 40m 41m 42m 43m 44m 45m 46m 47m;
-      do echo -en "$EINS \033[$FG\033[$BG  $T  \033[0m";
-    done
-    echo;
-  done
-  echo
-} # allcolors
 
 function syncall() {
 
@@ -250,8 +220,6 @@ export dot undot
 bootstrap
 # sync only by time
 timesync
-# check for existing screen sessions
-screen_sessions
 # check for local/alt profiles
 altprofiles
 ###################
