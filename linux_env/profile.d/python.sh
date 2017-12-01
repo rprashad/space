@@ -1,2 +1,1 @@
-PYTHONSTARTUP=~/bin/tools/python_startup.py
-export PYTHONSTARTUP
+export PATH=$HOME/anaconda3/bin:$PATH
