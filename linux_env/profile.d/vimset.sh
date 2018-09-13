@@ -3,9 +3,10 @@ if [[ "$BASH_VERSION" =~ ^4 ]]; then
   PLUGIN_DIR="$HOME/.vim/bundle"
   declare -A PLUGINS
   PLUGINS=(
+
+            ["rust-vim"]="https://github.com/rust-lang/rust.vim.git"
             ["nerdtree"]="https://github.com/scrooloose/nerdtree"
             ["vim-rails"]="git://github.com/tpope/vim-rails.git"
-            ["vim-bundler"]="git://github.com/tpope/vim-bundler.git"
             ["vim-ruby"]="git://github.com/vim-ruby/vim-ruby.git"
             ["vim-fugitive"]="git://github.com/tpope/vim-fugitive.git"
             ["vim-javascript"]="https://github.com/pangloss/vim-javascript.git"
