@@ -165,6 +165,14 @@ function syncall() {
   vim_dst="$HOME/.vimrc"
   syncfile $vim_src $vim_dst
 
+
+# sync .vimrc.local
+  vim_src="$HOME/git/space/linux_env/.vimrc.local"
+  vim_dst="$HOME/.vimrc.local"
+  syncfile $vim_src $vim_dst
+
+
+
 # sync .tmux.conf
   tmux_src="$HOME/git/space/linux_env/.tmux.conf"
   tmux_dst="$HOME/.tmux.conf"
