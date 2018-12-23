@@ -1,3 +1,4 @@
 " Conf
 let g:snips_author = "rajendra prashad"
-let g:ale_linters = {'rust': ['rustc']}
+let g:ale_linters = {'rust': ['rls']}
+let g:ale_completion_enabled = 1
