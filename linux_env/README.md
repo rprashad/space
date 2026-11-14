@@ -17,6 +17,8 @@ Neovim **0.10+** and tmux **3.2+** are required. An older distribution's default
 
 The shared Powerlevel10k ribbon shows the current directory and Git status on the left, and the machine's local IPv4 address, load, RAM, and time on the right. The IP segment uses the first active Ethernet/Wi-Fi interface (`en*`, `eth*`, `wl*`, or `ww*`), including WSL's Linux interface, and disappears when none has an address. It updates dynamically without an external IP service. In WSL this is the Linux instance's address, which can differ from the Windows host's LAN address.
 
+Pasted Zsh input uses bright white text rather than reverse-video highlighting, keeping it readable on the navy background. Bracketed paste remains enabled for literal multiline input.
+
 The prompt lives in `config/zsh/p10k.zsh`; the installer links it to `~/.config/zsh/p10k.zsh`. After changing it, open a new shell or run `exec zsh -l`. The shared palette, terminal profiles, tmux styles, and Neovim colorscheme are included in this repository so `./setup` can restore the shell appearance on another machine.
 
 ## Linux terminal defaults

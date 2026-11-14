@@ -36,6 +36,10 @@ alias vim=nvim
 zle -A .bracketed-paste bracketed-paste
 bindkey -M emacs '^[[200~' bracketed-paste
 bindkey -M viins '^[[200~' bracketed-paste
+# Standout/reverse video makes pasted text dark in xterm's navy palette.
+# Keep other ZLE highlights and show pasted input in bright white.
+typeset -ga zle_highlight
+zle_highlight=("${(@)zle_highlight:#paste:*}" 'paste:fg=15')
 [[ -r "$HOME/.config/space/platform.zsh" ]] && source "$HOME/.config/space/platform.zsh"
 
 # macOS Screen Sharing shortcuts (see ~/.local/bin/mac-screen)
