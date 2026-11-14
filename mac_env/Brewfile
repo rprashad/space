@@ -1,0 +1,12 @@
+# Terminal baseline; brew bundle does not remove unrelated packages.
+brew "python"
+brew "zsh"
+brew "git"
+brew "tmux"
+brew "ncurses"
+brew "neovim"
+brew "ripgrep"
+brew "fzf"
+brew "jq"
+brew "gh"
+cask "iterm2"

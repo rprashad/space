@@ -1,0 +1,10 @@
+#!/bin/sh
+if [ "$(uname -s)" = Darwin ] && command -v pbcopy >/dev/null 2>&1; then
+    exec pbcopy
+elif [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1; then
+    exec wl-copy
+elif [ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1; then
+    exec xclip -selection clipboard -in
+fi
+printf '%s\n' 'No clipboard available: macOS needs pbcopy; Linux needs wl-clipboard or xclip and a graphical session.' >&2
+exit 1

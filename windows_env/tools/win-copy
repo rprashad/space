@@ -1,0 +1,10 @@
+#!/bin/sh
+# WSLg bridges X CLIPBOARD to Windows; preserve UTF-8 in the fallback.
+if command -v xclip >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+    exec xclip -selection clipboard -in
+elif command -v powershell.exe >/dev/null 2>&1; then
+    exec powershell.exe -NoProfile -NonInteractive -STA -Command '[Console]::InputEncoding = [System.Text.UTF8Encoding]::new($false); $s = [Console]::In.ReadToEnd(); Set-Clipboard -Value $s'
+elif command -v wl-copy >/dev/null 2>&1 && [ -n "${WAYLAND_DISPLAY:-}" ]; then
+    exec wl-copy
+fi
+echo 'No Windows clipboard bridge available' >&2; exit 1

@@ -1,0 +1,30 @@
+#!/bin/sh
+# Bootstrap Python on macOS, then use the common installer.
+set -eu
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+if [ "$(uname -s)" = Darwin ]; then
+    if ! command -v brew >/dev/null 2>&1; then
+        for prefix in /opt/homebrew /usr/local; do
+            if [ -x "$prefix/bin/brew" ]; then export PATH="$prefix/bin:$prefix/sbin:$PATH"; break; fi
+        done
+    fi
+    if ! command -v brew >/dev/null 2>&1; then
+        printf '%s\n' 'Install Homebrew first: https://brew.sh/ ; then rerun ./setup.' >&2
+        exit 1
+    fi
+    # Prefer Homebrew Python; avoid invoking the Xcode python3 stub on a fresh Mac.
+    brew_prefix=$(brew --prefix)
+    if [ ! -x "$brew_prefix/bin/python3" ]; then
+        case " $* " in
+            *' --dry-run '*)
+                printf '%s\n' 'Would run: brew install python' "Then: python3 $repo_root/linux_env/tools/bootstrap-terminal.py $*"
+                exit 0;;
+            *' --configs-only '*)
+                printf '%s\n' '--configs-only requires Python 3; install it with brew install python.' >&2
+                exit 1;;
+            *) brew install python;;
+        esac
+    fi
+    exec "$brew_prefix/bin/python3" "$repo_root/linux_env/tools/bootstrap-terminal.py" "$@"
+fi
+exec python3 "$repo_root/linux_env/tools/bootstrap-terminal.py" "$@"

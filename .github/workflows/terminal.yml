@@ -1,0 +1,28 @@
+name: Terminal environment
+on:
+  push:
+    paths: ['setup', 'linux_env/**', 'mac_env/**', 'windows_env/**', '.github/workflows/terminal.yml']
+  pull_request:
+    paths: ['setup', 'linux_env/**', 'mac_env/**', 'windows_env/**', '.github/workflows/terminal.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  terminal:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Linux test dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y zsh tmux
+      - name: macOS test dependencies
+        if: runner.os == 'macOS'
+        run: brew install tmux
+      - run: python3 linux_env/tests/test-install.py
+      - run: python3 linux_env/tests/test-paste.py

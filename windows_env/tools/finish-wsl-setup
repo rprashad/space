@@ -1,0 +1,46 @@
+#!/bin/bash
+set -euo pipefail
+trap 'printf "\nSetup stopped at line %s. Installation is incomplete; fix the error above and rerun this script.\n" "$LINENO" >&2' ERR
+# Run this in your regular WSL terminal; sudo may ask for your Linux password.
+sudo apt-get update
+sudo apt-get install -y zsh git curl ca-certificates fonts-powerline fonts-dejavu-core fontconfig xterm tmux neovim x11-utils x11-xserver-utils xclip wl-clipboard ruby ruby-dev build-essential
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+    git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+fi
+if [[ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]]; then
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+fi
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    set +u
+    . "$NVM_DIR/nvm.sh"
+    set -u
+fi
+command -v npm >/dev/null || { echo 'Install Node.js/npm, then rerun this script.' >&2; exit 1; }
+npm install --prefix "$HOME/.local" --global pyright typescript typescript-language-server vscode-langservers-extracted yaml-language-server
+# Use system Ruby deliberately so pyenv/rbenv cannot select another runtime.
+/usr/bin/gem install --user-install --no-document ruby-lsp
+ruby_gem_bin=$(/usr/bin/ruby -r rubygems -e 'puts Gem.user_dir')/bin
+ln -sfn "$ruby_gem_bin/ruby-lsp" "$HOME/.local/bin/ruby-lsp"
+if [[ -x "$HOME/.cargo/bin/rustup" ]]; then
+    "$HOME/.cargo/bin/rustup" component add rust-analyzer
+    ln -sfn "$HOME/.cargo/bin/rust-analyzer" "$HOME/.local/bin/rust-analyzer"
+else
+    sudo apt-get install -y rust-analyzer cargo rustc
+fi
+# Apply versioned defaults after dependencies are ready.
+repo_root=$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/../.." && pwd)
+python3 "$repo_root/linux_env/tools/install-terminal.py" --platform wsl
+python3 "$repo_root/windows_env/tools/apply-native-look.py"
+if ! command -v gh >/dev/null 2>&1; then
+    python3 "$repo_root/windows_env/tools/install-github-cli.py"
+fi
+fc-cache -f
+if [[ -n "${DISPLAY:-}" ]]; then xrdb -merge "$HOME/.Xresources"; fi
+if tmux list-sessions >/dev/null 2>&1; then tmux source-file "$HOME/.tmux.conf"; fi
+if [[ "$(getent passwd "$USER" | cut -d: -f7)" != /bin/zsh ]]; then
+    sudo usermod --shell /bin/zsh "$USER"
+fi
+export PATH="$HOME/.local/bin:$PATH"
+zsh -lic 'print "Zsh ready: $ZSH_VERSION"; for cmd in pyright-langserver typescript-language-server rust-analyzer ruby-lsp vscode-json-language-server yaml-language-server; do command -v "$cmd" || exit 1; done'
+printf '\nSetup complete. Open xterm-wsl or run: exec /bin/zsh -l\n'

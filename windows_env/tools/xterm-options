@@ -1,0 +1,16 @@
+#!/bin/sh
+cat <<'HELP'
+┌─ xterm / WSL shortcuts ──────────────────────────────────────┐
+│ Copy / paste: Ctrl+Shift+C / Ctrl+Shift+V (Windows clipboard) │
+│ Select text: drag; in tmux hold Shift while dragging         │
+│ Menus: Ctrl+left = main; Ctrl+middle = VT; Ctrl+right = font  │
+│ Font size: Shift+keypad + / -    Scroll: Shift+PageUp/Down    │
+│ tmux: click a pane to focus; drag borders; wheel to scroll   │
+│ tmux prefix: Ctrl+b; | split right; - split below; z zoom    │
+│ tmux: prefix+[ copy mode; v select; y copy; prefix+] paste   │
+│ Shell clipboard: command | win-copy; win-paste | command     │
+│ Neovim: Ctrl+Space completion; Tab/Shift+Tab choices; Enter  │
+│ LSP: gd definition; K docs; Space rn rename; Space ca action │
+│ Show this panel: xterm-options    New terminal: xterm-wsl    │
+└─────────────────────────────────────────────────────────────┘
+HELP

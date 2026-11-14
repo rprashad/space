@@ -1,0 +1,20 @@
+#!/bin/sh
+# Use the Windows VS Code launcher, connected to the current WSL distro.
+set -eu
+launcher=${CODE_WSL_LAUNCHER:-}
+if [ -z "$launcher" ]; then
+    for candidate in /mnt/c/Users/*/AppData/Local/Programs/"Microsoft VS Code"/bin/code /mnt/c/"Program Files/Microsoft VS Code"/bin/code; do
+        [ -x "$candidate" ] || continue
+        if [ -n "$launcher" ]; then
+            echo 'Multiple VS Code installations; set CODE_WSL_LAUNCHER to the desired bin/code path.' >&2
+            exit 1
+        fi
+        launcher=$candidate
+    done
+fi
+if [ ! -x "$launcher" ]; then
+    echo 'Install Windows VS Code and its WSL extension, or set CODE_WSL_LAUNCHER.' >&2
+    exit 127
+fi
+[ "$#" -gt 0 ] || set -- "$PWD"
+exec "$launcher" --remote "wsl+${WSL_DISTRO_NAME:-Debian}" "$@"

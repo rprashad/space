@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+import os, pathlib, time
+try:
+    fields=list(map(int,pathlib.Path('/proc/stat').read_text().splitlines()[0].split()[1:9]))
+    total=sum(fields); idle=fields[3]+fields[4]
+    cache=pathlib.Path(os.environ.get('XDG_CACHE_HOME',str(pathlib.Path.home()/'.cache')))/'wsl-cpu'
+    cache.parent.mkdir(parents=True,exist_ok=True)
+    now=time.time(); usage=0.0
+    try:
+        old,prev_total,prev_idle,usage=map(float,cache.read_text().split())
+        if now-old>=1 and total>prev_total:
+            usage=100*(1-(idle-prev_idle)/(total-prev_total))
+    except (ValueError,OSError): pass
+    cache.write_text(f'{now} {total} {idle} {usage}')
+    print(f'CPU {max(0,min(100,usage)):.0f}%')
+except (OSError,ValueError): print('CPU ?')

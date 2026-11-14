@@ -1,0 +1,23 @@
+#!/bin/sh
+# Launch the native terminal using the configured Zsh environment.
+set -eu
+if [ "$(uname -s)" = Darwin ]; then
+    if [ "$#" -gt 0 ]; then
+        printf '%s\n' 'space-terminal on macOS opens the default Space Navy Terminal.app profile; pass commands inside the shell.' >&2
+        exit 2
+    fi
+    exec open -a Terminal
+fi
+[ "$#" -gt 0 ] || set -- /bin/zsh -l
+if command -v gnome-terminal >/dev/null 2>&1; then
+    exec gnome-terminal -- "$@"
+elif command -v kitty >/dev/null 2>&1; then
+    exec kitty "$@"
+elif command -v xterm >/dev/null 2>&1; then
+    if command -v xrdb >/dev/null 2>&1 && [ -r "$HOME/.Xresources" ]; then
+        xrdb -merge "$HOME/.Xresources"
+    fi
+    exec xterm -e "$@"
+fi
+printf '%s\n' 'Install GNOME Terminal, Kitty, or xterm.' >&2
+exit 1

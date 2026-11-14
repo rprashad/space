@@ -1,0 +1,10 @@
+#!/bin/sh
+if command -v xclip >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+    exec xclip -selection clipboard -out
+elif command -v powershell.exe >/dev/null 2>&1; then
+    powershell.exe -NoProfile -NonInteractive -Command '[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new(); $s = Get-Clipboard -Raw; if ($null -ne $s) { [Console]::Write($s.Replace("`r`n", "`n")) }'
+elif command -v wl-paste >/dev/null 2>&1 && [ -n "${WAYLAND_DISPLAY:-}" ]; then
+    exec wl-paste --no-newline
+else
+    echo 'No Windows clipboard bridge available' >&2; exit 1
+fi

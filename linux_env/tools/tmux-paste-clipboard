@@ -1,0 +1,9 @@
+#!/bin/sh
+# Keep trailing newlines and frame paste only when the target requests it.
+set -eu
+clipboard_file=$(mktemp)
+clipboard_buffer="space-clipboard-$$"
+trap 'rm -f "$clipboard_file"; tmux delete-buffer -b "$clipboard_buffer" 2>/dev/null || :' EXIT HUP INT TERM
+"$HOME/.local/bin/clipboard-paste" > "$clipboard_file"
+tmux load-buffer -b "$clipboard_buffer" "$clipboard_file"
+tmux paste-buffer -d -p -b "$clipboard_buffer" -t "$1"

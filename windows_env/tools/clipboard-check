@@ -1,0 +1,91 @@
+#!/usr/bin/python3
+"""Check WSLg clipboard without changing it; --test verifies both directions."""
+import base64
+import os
+import shutil
+import subprocess
+import sys
+import time
+
+PS = shutil.which('powershell.exe') or '/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe'
+
+def powershell(code):
+    encoded = base64.b64encode(code.encode('utf-16le')).decode('ascii')
+    result = subprocess.run([PS, '-NoProfile', '-NonInteractive', '-STA',
+                             '-EncodedCommand', encoded], capture_output=True, timeout=12)
+    if result.returncode:
+        raise RuntimeError('Windows clipboard access failed')
+    return result.stdout
+
+def windows_read():
+    return base64.b64decode(powershell(
+        "[Console]::Write([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes([string](Get-Clipboard -Raw))))"
+    )).decode('utf-8')
+
+def windows_write(value):
+    payload = base64.b64encode(value.encode('utf-8')).decode('ascii')
+    powershell("$ErrorActionPreference='Stop'; $v=[Text.Encoding]::UTF8.GetString("
+               "[Convert]::FromBase64String('" + payload + "')); "
+               "for($i=0;$i -lt 15;$i++){try{Set-Clipboard -Value $v; exit 0}"
+               "catch{Start-Sleep -Milliseconds 100}}; exit 1")
+
+def x_read():
+    result = subprocess.run(['xclip', '-selection', 'clipboard', '-out'],
+                            capture_output=True, timeout=3)
+    if result.returncode:
+        raise RuntimeError('X clipboard does not offer text')
+    return result.stdout.decode('utf-8')
+
+def x_write(value):
+    # xclip's selection-owner child must not inherit captured output pipes.
+    subprocess.run(['xclip', '-selection', 'clipboard', '-in'], input=value.encode('utf-8'),
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=3, check=True)
+
+def normalized(value):
+    return value.replace('\r\n', '\n')
+
+def expect(read, expected):
+    for _ in range(15):
+        try:
+            if normalized(read()) == normalized(expected):
+                return
+        except (RuntimeError, subprocess.TimeoutExpired):
+            pass
+        time.sleep(.15)
+    raise RuntimeError('Windows and X clipboard text did not synchronize')
+
+def main():
+    if not os.environ.get('DISPLAY') or not shutil.which('xclip'):
+        raise RuntimeError('WSLg DISPLAY and xclip are required')
+    subprocess.run(['xdpyinfo'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                   timeout=3, check=True)
+    if '--test' in sys.argv:
+        original = windows_read()
+        try:
+            token = 'Clipboard check — café ✓\nsecond line'
+            x_write(token)
+            expect(windows_read, token)
+            print('PASS: X clipboard → Windows (Unicode and multiline)')
+            windows_write(token + ' Windows')
+            expect(x_read, token + ' Windows')
+            print('PASS: Windows → X clipboard (Unicode and multiline)')
+        finally:
+            # Re-establish both owners after Windows/X clipboard handoffs.
+            windows_write(original)
+            x_write(original)
+            expect(windows_read, original)
+            expect(x_read, original)
+        print('PASS: original clipboard text restored')
+    else:
+        text = windows_read()
+        if text:
+            expect(x_read, text)
+        # Empty or non-text clipboards are valid; do not replace their contents.
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception:
+        print('Clipboard check failed. Run ~/.local/bin/clipboard-check --test in WSL '
+              'to check the Windows/WSLg bridge before opening xterm.', file=sys.stderr)
+        sys.exit(1)

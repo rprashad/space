@@ -1,0 +1,22 @@
+#!/bin/sh
+# Non-destructive checks; never print clipboard contents or rewrite hosts.
+set -u
+printf 'Terminal: %s; WSL: %s\n' "${TERM:-unset}" "${WSL_DISTRO_NAME:-unset}"
+for tool in zsh tmux xterm nvim code gh xclip wl-copy; do
+    command -v "$tool" || :
+done
+if tmux list-sessions >/dev/null 2>&1; then
+    tmux show-options -sv escape-time
+    tmux show-options -sv set-clipboard
+    tmux list-clients -F 'client: #{client_termname} features: #{client_termfeatures}'
+fi
+printf '\nClipboard transport (read only):\n'
+if command -v timeout >/dev/null 2>&1; then
+    timeout 15 "$HOME/.local/bin/clipboard-check" && printf 'Windows/X clipboard synchronized\n'
+fi
+if [ "$#" -gt 0 ]; then
+    printf '\nHost lookup: %s\n' "$1"
+    getent ahostsv4 "$1" || :
+    printf '\nHTTPS check on port %s (certificate validation skipped for diagnosis):\n' "${2:-8006}"
+    curl --noproxy '*' --insecure --silent --show-error --output /dev/null --write-out 'HTTP %{http_code}; peer %{remote_ip}\n' --connect-timeout 4 --max-time 6 "https://$1:${2:-8006}/"
+fi

@@ -1,0 +1,8 @@
+#!/bin/sh
+export XENVIRONMENT="$HOME/.Xresources"
+if command -v xrdb >/dev/null 2>&1; then xrdb -merge "$HOME/.Xresources"; fi
+xterm_binary="$HOME/.local/opt/xterm-toolbar/bin/xterm"
+[ -x "$xterm_binary" ] || xterm_binary=/usr/bin/xterm
+if [ "$#" -gt 0 ]; then exec "$xterm_binary" -u8 -tn xterm-256color -fa 'MesloLGS NF' "$@"; fi
+if [ -x /bin/zsh ]; then exec "$xterm_binary" -u8 -tn xterm-256color -fa 'MesloLGS NF' -e /bin/zsh -l; fi
+exec "$xterm_binary" -u8 -tn xterm-256color -fa 'MesloLGS NF' -e /bin/bash -l

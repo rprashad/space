@@ -1,0 +1,23 @@
+{
+  "name": "Space Navy",
+  "background": "#34465f",
+  "foreground": "#f3f6fc",
+  "cursorColor": "#ffe1a3",
+  "selectionBackground": "#b9d8ff",
+  "black": "#23334b",
+  "red": "#ffb4b8",
+  "green": "#bce7bc",
+  "yellow": "#ffe1a3",
+  "blue": "#b9d8ff",
+  "purple": "#e0c4ff",
+  "cyan": "#a9e9e2",
+  "white": "#dbe4f1",
+  "brightBlack": "#b8c6da",
+  "brightRed": "#ffc5c8",
+  "brightGreen": "#cdf3cd",
+  "brightYellow": "#ffedc3",
+  "brightBlue": "#cee5ff",
+  "brightPurple": "#eddbff",
+  "brightCyan": "#c4f5ef",
+  "brightWhite": "#ffffff"
+}

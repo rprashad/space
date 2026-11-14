@@ -1,0 +1,32 @@
+#!/bin/sh
+# Read-only checks for the shared shell environment; no clipboard contents printed.
+set -u
+printf 'System: %s; terminal: %s\n' "$(uname -s)" "${TERM:-unset}"
+missing=0
+for tool in zsh tmux nvim git python3 rg gh clipboard-copy clipboard-paste; do
+    if ! command -v "$tool"; then
+        printf 'Missing: %s\n' "$tool" >&2
+        missing=1
+    fi
+done
+if [ "$(uname -s)" = Darwin ]; then
+    command -v pbcopy
+    command -v pbpaste
+else
+    if [ -n "${WSL_DISTRO_NAME:-}" ] && [ -x "$HOME/.local/bin/win-copy" ]; then
+        printf 'Clipboard backend: WSLg / Windows bridge\n'
+    elif [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1; then
+        printf 'Clipboard backend: Wayland\n'
+    elif [ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1; then
+        printf 'Clipboard backend: X11\n'
+    else
+        printf 'No desktop clipboard; run inside a graphical session.\n'
+    fi
+fi
+if command -v infocmp >/dev/null 2>&1; then
+    infocmp tmux-256color >/dev/null 2>&1 || { printf 'Missing terminfo: tmux-256color\n' >&2; missing=1; }
+    if [ "$(uname -s)" = Darwin ]; then
+        infocmp nsterm-256color >/dev/null 2>&1 || { printf 'Missing terminfo: nsterm-256color (install Homebrew ncurses)\n' >&2; missing=1; }
+    fi
+fi
+exit "$missing"
